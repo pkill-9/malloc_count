@@ -1,5 +1,4 @@
 /******************************************************************************
- * malloc_count.h
  *
  * Header containing prototypes of user-callable functions to retrieve run-time
  * information about malloc()/free() allocation.
@@ -26,8 +25,8 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef _MALLOC_COUNT_H_
-#define _MALLOC_COUNT_H_
+#ifndef _MEMLOG_FUNCTIONS_H
+#define _MEMLOG_FUNCTIONS_H
 
 #include <stdlib.h>
 
@@ -35,31 +34,20 @@
 extern "C" { /* for inclusion from C++ */
 #endif
 
-/* returns the currently allocated amount of memory */
-extern size_t malloc_count_current(void);
+extern void open_memlog (const char *progname);
+extern void close_memlog (void);
 
-/* returns the current peak memory allocation */
-extern size_t malloc_count_peak(void);
-
-/* resets the peak memory allocation to current */
-extern void malloc_count_reset_peak(void);
-
-/* typedef of callback function */
-typedef void (*malloc_count_callback_type)(void* cookie, size_t current);
-
-/* supply malloc_count with a callback function that is invoked on each change
- * of the current allocation. The callback function must not use
- * malloc()/realloc()/free() or it will go into an endless recursive loop! */
-extern void malloc_count_set_callback(malloc_count_callback_type cb,
-                                      void* cookie);
-
-/* user function which prints current and peak allocation to stderr */
-extern void malloc_count_print_status(void);
+// these functions handle calls to malloc and free. They should not be
+// invoked directly, instead use the macros defined in memlog.h
+extern void * malloc_log (const char *file, const char *line, 
+  const char *func, size_t bytes);
+extern void free_log (const char *file, const char *line, const char *func,
+  void *pointer);
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* _MALLOC_COUNT_H_ */
+#endif /* _MEMLOG_FUNCTIONS_H */
 
 /*****************************************************************************/
