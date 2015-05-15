@@ -1,0 +1,4 @@
+# ignore vim swap files.
+*.swp
+
+# vim: ft=conf ts=4 sw=4 et
