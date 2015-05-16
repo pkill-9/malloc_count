@@ -14,8 +14,8 @@
 // allocation, call the real malloc, and return the result. Note that this
 // header file must not be included in memlog.c, since we cannot redirect
 // the call to the real malloc.
-#define malloc(size)    malloc_log (__FILE__, __LINE__, __func__, size)
-#define free(pointer)   free_log (__FILE__, __LINE__, __func__, pointer)
+#define malloc(size)    log_malloc (__FILE__, __LINE__, __func__, size)
+#define free(pointer)   log_free (__FILE__, __LINE__, __func__, pointer)
 
 #endif // _MEMLOG_H
 
