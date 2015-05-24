@@ -25,52 +25,25 @@
  * IN THE SOFTWARE.
  *****************************************************************************/
 
-#include "malloc_count.h"
-#include "stack_count.h"
+#include "memlog.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-void function_use_stack()
-{
-    char data[64*1024];
-    memset(data, 1, sizeof(data));
-}
 
 int main()
 {
+    open_memlog ("test");
+
     /* allocate and free some memory */
     void* a = malloc(2*1024*1024);
     free(a);
 
-    /* query malloc_count for information */
-    printf("our peak memory allocation: %lld\n",
-           (long long)malloc_count_peak());
-
     /* use realloc() */
     void* b = malloc(3*1024*1024);
-    malloc_count_print_status();
-
-    b = realloc(b, 2*1024*1024);
-    malloc_count_print_status();
-
-    b = realloc(b, 4*1024*1024);
-    malloc_count_print_status();
 
     free(b);
-
-    /* some unusual realloc calls */
-    void* c = realloc(NULL, 1*1024*1024);
-    c = realloc(c, 0);
-
-    /* show how stack_count works */
-    {
-        void* base = stack_count_clear();
-        function_use_stack();
-        printf("maximum stack usage: %lld\n",
-               (long long)stack_count_usage(base));
-    }
 
     return 0;
 }

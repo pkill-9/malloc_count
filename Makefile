@@ -1,10 +1,10 @@
 # Simplistic Makefile for malloc_count example
 
 CC = gcc
-CFLAGS = -g -W -Wall -ansi -I..
+CFLAGS = -g -Wextra -Wall -ansi 
 LDFLAGS =
-LIBS = -ldl
-OBJS = test.o ../malloc_count.o ../stack_count.o
+LIBS = 
+OBJS = test.o memlog.o
 
 all: test
 
