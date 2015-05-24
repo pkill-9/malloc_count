@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include "memlog_functions.h"
+#include "utils.h"
 
 
 /***********************************************************/
@@ -35,7 +36,7 @@ log_malloc (const char *file, const char *line, const char *func,
 {
     void *address = malloc (bytes);
 
-    fprintf (logfd, "malloc,\"%s\",\"%s\",\"%s\",%0x,%d\n", file, line,
+    fprintf (logfd, "malloc,\"%s\",\"%s\",\"%s\",%p,%d\n", file, line,
       func, address, bytes);
 
     return address;
@@ -55,7 +56,7 @@ log_free (const char *file, const char *line, const char *func, void *ptr)
 
     free (ptr);
 
-    fprintf (logfd, "free,\"%s\",\"%s\",\"%s\",%0x,%d\n", file, line,
+    fprintf (logfd, "free,\"%s\",\"%s\",\"%s\",%p,%d\n", file, line,
       func, ptr, size);
 }
 
@@ -72,7 +73,7 @@ log_free (const char *file, const char *line, const char *func, void *ptr)
     PRIVATE size_t
 get_allocation_size (void *pointer)
 {
-    uint16_t chunk_size = (uint16_t) *(pointer - sizeof (uint16_t));
+    uint16_t chunk_size = *((uint16_t *) pointer - 1);
     return (size_t) chunk_size;
 }
 
