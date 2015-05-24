@@ -37,11 +37,9 @@ extern "C" { /* for inclusion from C++ */
 extern void open_memlog (const char *progname);
 extern void close_memlog (void);
 
-// these functions handle calls to malloc and free. They should not be
-// invoked directly, instead use the macros defined in memlog.h
-extern void * log_malloc (const char *file, const char *line, 
-  const char *func, size_t bytes);
-extern void log_free (const char *file, const char *line, const char *func,
+extern void * log_malloc (const char *file, int line, const char *func, 
+  size_t bytes);
+extern void log_free (const char *file, int line, const char *func,
   void *pointer);
 
 #ifdef __cplusplus

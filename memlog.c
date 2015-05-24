@@ -31,15 +31,19 @@ FILE *logfd;
  *  Log memory allocations, and print the details to a file in CSV format.
  */
     PUBLIC void *
-log_malloc (const char *file, const char *line, const char *func, 
-  size_t bytes)
+log_malloc (const char *file, int line, const char *func, size_t bytes)
 {
+    bytes += sizeof (size_t);
     void *address = malloc (bytes);
 
-    fprintf (logfd, "malloc,\"%s\",\"%s\",\"%s\",%p,%d\n", file, line,
+    fprintf (logfd, "malloc,\"%s\",%d,\"%s\",%p,%d\n", file, line,
       func, address, bytes);
 
-    return address;
+    /** store the size of the block in the first padding that we added for
+     *  this exact purpose. */
+    *(size_t *) address = bytes;
+
+    return ((size_t *) address) + 1;
 }
 
 
@@ -50,13 +54,14 @@ log_malloc (const char *file, const char *line, const char *func,
  *  Log calls to free.
  */
     PUBLIC void
-log_free (const char *file, const char *line, const char *func, void *ptr)
+log_free (const char *file, int line, const char *func, void *ptr)
 {
     size_t size = get_allocation_size (ptr);
+    ptr = (void *) (((size_t *) ptr) - 1);
 
     free (ptr);
 
-    fprintf (logfd, "free,\"%s\",\"%s\",\"%s\",%p,%d\n", file, line,
+    fprintf (logfd, "free,\"%s\",%d,\"%s\",%p,%d\n", file, line,
       func, ptr, size);
 }
 
@@ -73,8 +78,7 @@ log_free (const char *file, const char *line, const char *func, void *ptr)
     PRIVATE size_t
 get_allocation_size (void *pointer)
 {
-    uint16_t chunk_size = *((uint16_t *) pointer - 1);
-    return (size_t) chunk_size;
+    return * (((size_t *) pointer) - 1);
 }
 
 
